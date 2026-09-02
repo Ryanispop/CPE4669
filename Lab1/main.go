@@ -38,19 +38,28 @@ func multiplyConcurrent(a, b [][]float32) [][]float32 {
 
 	var wg sync.WaitGroup
 
-	// Start one goroutine for each row in C.
-	for i := 0; i < n; i++ {
+	rowsPerGoroutine := 500
+
+	// Start one goroutine for each band of `rowsPerGoroutine` rows in C.
+	for start := 0; start < n; start += rowsPerGoroutine {
+		end := start + rowsPerGoroutine
+		if end > n {
+			end = n // last band may be smaller if n is odd
+		}
+
 		wg.Add(1)
 
-		go func(row int) {
+		go func(start, end int) {
 			defer wg.Done()
 
-			for j := 0; j < n; j++ {
-				for k := 0; k < n; k++ {
-					c[row][j] += a[row][k] * b[k][j]
+			for row := start; row < end; row++ {
+				for j := 0; j < n; j++ {
+					for k := 0; k < n; k++ {
+						c[row][j] += a[row][k] * b[k][j]
+					}
 				}
 			}
-		}(i)
+		}(start, end)
 	}
 
 	wg.Wait()
@@ -70,7 +79,7 @@ func resultsMatch(a, b [][]float32) bool {
 }
 
 func main() {
-	n := 3000
+	n := 500
 	rng := rand.New(rand.NewSource(42))
 
 	a := makeMatrix(n)
