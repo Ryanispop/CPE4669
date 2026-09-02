@@ -38,13 +38,13 @@ func multiplyConcurrent(a, b [][]float32) [][]float32 {
 
 	var wg sync.WaitGroup
 
-	rowsPerGoroutine := 500
+	rowsPerGoroutine := 1
 
 	// Start one goroutine for each band of `rowsPerGoroutine` rows in C.
 	for start := 0; start < n; start += rowsPerGoroutine {
 		end := start + rowsPerGoroutine
 		if end > n {
-			end = n // last band may be smaller if n is odd
+			end = n
 		}
 
 		wg.Add(1)

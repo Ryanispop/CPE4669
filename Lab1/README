@@ -1,0 +1,15 @@
+From the project folder:
+
+go run main.go
+
+Change the matrix size in main.go:
+
+n := 500
+
+The program prints:
+
+Sequential execution time
+Concurrent execution time
+Whether both result matrices match
+
+The concurrent version uses goroutines to calculate separate rows of the result matrix at the same time.
