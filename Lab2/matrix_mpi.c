@@ -8,13 +8,14 @@ int main(int argc, char *argv[]) {
 
    // 1. matrix multiplication using MPI
    int rank, size;
-   // calculate number of rows to be processed by each MPI process
-   int rowsperprocess = n / size;
 
    // start MPI, get process ID and number of processes
    MPI_Init(&argc, &argv);
    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+   // calculate number of rows to be processed by each MPI process
+   int rowsperprocess = n / size;
 
    float A[n][n];
    float B[n][n];
