@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <mpi.h>
+#include <math.h>
 
 #define n 4
 
@@ -24,29 +26,38 @@ int main(int argc, char *argv[]) {
    float Alocal[rowsperprocess][n];
    float Clocal[rowsperprocess][n];
 
+   float Cseq[n][n];
+
    // initialize only on process 0
    if (rank == 0) {
-      float tempA[n][n] = {
-         {1, 2, 3, 4},
-         {5, 6, 7, 8},
-         {9, 10, 11, 12},
-         {13, 14, 15, 16}
-      };
-
-      float tempB[n][n] = {
-         {1, 0, 0, 0},
-         {0, 1, 0, 0},
-         {0, 0, 1, 0},
-         {0, 0, 0, 1}
-      };
-
-      // copy tempA and tempB to A and B
+      
+      // get random matrices A and B
+      //srand(time(NULL));
+      srand(42);
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
-            A[i][j] = tempA[i][j];
-            B[i][j] = tempB[i][j];
+            A[i][j] = (float)(rand() % 10);
+            B[i][j] = (float)(rand() % 10);
          }
       }
+
+      // print matrices A and B for verification
+      printf("Matrix A:\n");
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            printf("%.0f ", A[i][j]);
+         }
+         printf("\n");
+      }
+
+      printf("Matrix B:\n");
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            printf("%.0f ", B[i][j]);
+         }
+         printf("\n");
+      }
+
    }
 
    // broadcast B to all processes
@@ -70,10 +81,38 @@ int main(int argc, char *argv[]) {
 
    // print the result matrix C on process 0
    if (rank == 0) {
+
+      // perform sequential matrix multiplication for verification
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            Cseq[i][j] = 0;
+            for (int k = 0; k < n; k++) {
+               Cseq[i][j] += A[i][k] * B[k][j];
+            }
+         }
+      }
+      
+      // check for correctness
+      int correct = 1;
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            if (fabs(C[i][j] - Cseq[i][j]) > 1e-6) {
+               correct = 0;
+               break;
+            }
+         }
+         if (!correct) break;
+      }
+      if (correct) {
+         printf("Matrix multiplication is correct.\n");
+      } else {
+         printf("Matrix multiplication is incorrect.\n");
+      }
+
       printf("Result matrix C:\n");
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
-            printf("%.2f ", C[i][j]);
+            printf("%.0f ", C[i][j]);
          }
          printf("\n");
       }
