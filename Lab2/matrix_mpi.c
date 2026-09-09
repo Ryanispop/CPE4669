@@ -17,16 +17,25 @@ int main(int argc, char *argv[]) {
    MPI_Comm_size(MPI_COMM_WORLD, &size);
 
    // calculate number of rows to be processed by each MPI process
+   // check for divisibility of matrix size by number of processes
+   if (n % size != 0) {
+      if (rank == 0) {
+         printf("Matrix size not divisible by number of processes.\n");
+      }
+      MPI_Finalize();
+      return -1;
+   }
    int rowsperprocess = n / size;
 
-   float A[n][n];
-   float B[n][n];
-   float C[n][n];
+   // dynamically allocated matrices
+   float *A = (float *)malloc(n * n * sizeof(float));
+   float *B = (float *)malloc(n * n * sizeof(float));
+   float *C = (float *)malloc(n * n * sizeof(float));
 
-   float Alocal[rowsperprocess][n];
-   float Clocal[rowsperprocess][n];
+   float *Alocal = (float *)malloc(rowsperprocess * n * sizeof(float));
+   float *Clocal = (float *)malloc(rowsperprocess * n * sizeof(float));
 
-   float Cseq[n][n];
+   float *Cseq = (float *)malloc(n * n * sizeof(float));
 
    // initialize only on process 0
    if (rank == 0) {
@@ -36,8 +45,8 @@ int main(int argc, char *argv[]) {
       srand(42);
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
-            A[i][j] = (float)(rand() % 10);
-            B[i][j] = (float)(rand() % 10);
+            A[i * n + j] = (float)(rand() % 10);
+            B[i * n + j] = (float)(rand() % 10);
          }
       }
 
@@ -45,7 +54,7 @@ int main(int argc, char *argv[]) {
       printf("Matrix A:\n");
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
-            printf("%.0f ", A[i][j]);
+            printf("%.0f ", A[i * n + j]);
          }
          printf("\n");
       }
@@ -53,7 +62,7 @@ int main(int argc, char *argv[]) {
       printf("Matrix B:\n");
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
-            printf("%.0f ", B[i][j]);
+            printf("%.0f ", B[i * n + j]);
          }
          printf("\n");
       }
@@ -69,9 +78,9 @@ int main(int argc, char *argv[]) {
    // perform local matrix multiplication
    for (int i = 0; i < rowsperprocess; i++) {
       for (int j = 0; j < n; j++) {
-         Clocal[i][j] = 0;
+         Clocal[i * n + j] = 0;
          for (int k = 0; k < n; k++) {
-            Clocal[i][j] += Alocal[i][k] * B[k][j];
+            Clocal[i * n + j] += Alocal[i * n + k] * B[k * n + j];
          }
       }
    }
@@ -85,9 +94,9 @@ int main(int argc, char *argv[]) {
       // perform sequential matrix multiplication for verification
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
-            Cseq[i][j] = 0;
+            Cseq[i * n + j] = 0;
             for (int k = 0; k < n; k++) {
-               Cseq[i][j] += A[i][k] * B[k][j];
+               Cseq[i * n + j] += A[i * n + k] * B[k * n + j];
             }
          }
       }
@@ -96,7 +105,7 @@ int main(int argc, char *argv[]) {
       int correct = 1;
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
-            if (fabs(C[i][j] - Cseq[i][j]) > 1e-6) {
+            if (fabs(C[i * n + j] - Cseq[i * n + j]) > 1e-6) {
                correct = 0;
                break;
             }
@@ -112,10 +121,20 @@ int main(int argc, char *argv[]) {
       printf("Result matrix C:\n");
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
-            printf("%.0f ", C[i][j]);
+            printf("%.0f ", C[i * n + j]);
          }
          printf("\n");
       }
+   }
+
+   // free allocated memory
+   free(Alocal);
+   free(Clocal);
+   if (rank == 0) {
+      free(A);
+      free(B);
+      free(C);
+      free(Cseq);
    }
 
    MPI_Finalize();
