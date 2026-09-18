@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 
 static int compare_ints(const void *a, const void *b)
 {
@@ -9,6 +10,28 @@ static int compare_ints(const void *a, const void *b)
     int right = *(const int *)b;
 
     return (left > right) - (left < right);
+}
+
+static void mergeArrays(const int *a, int aCount, const int *b, int bCount, int *result) {
+    int i = 0;
+    int j = 0;
+    int k = 0;
+
+    while (i < aCount && j < bCount) {
+        if (a[i] <= b[j]) {
+            result[k++] = a[i++];
+        } else {
+            result[k++] = b[j++];
+        }
+    }
+
+    while (i < aCount) {
+        result[k++] = a[i++];
+    }
+
+    while (j < bCount) {
+        result[k++] = b[j++];
+    }
 }
 
 int main(int argc, char **argv) {
@@ -92,6 +115,60 @@ int main(int argc, char **argv) {
         compare_ints
     );
 
+    MPI_Gatherv(
+        local_data,
+        local_count,
+        MPI_INT,
+        global_data,
+        counts,
+        displacements,
+        MPI_INT,
+        0,
+        MPI_COMM_WORLD
+    );
+
+    int *sortedData = NULL;
+
+    if (rank == 0) {
+        int capacity = n > 0 ? n : 1;
+        sortedData = malloc((size_t)capacity * sizeof(int));
+        int mergeCount = 0;
+
+        for (int p = 0; p < processes; p++) {
+
+            int chunkCount = counts[p];
+            if (chunkCount == 0) continue;
+
+            if (mergeCount == 0) {
+                memcpy(
+                    sortedData,
+                    global_data + displacements[p],
+                    (size_t)chunkCount * sizeof(int)
+                );
+                mergeCount = chunkCount;
+            } else {
+                int newCount = mergeCount + chunkCount;
+                int *temp = malloc((size_t)newCount * sizeof(int));
+                merge_arrays(
+                    sortedData,
+                    mergeCount,
+                    global_data + displacements[p],
+                    chunkCount,
+                    temp
+                );
+
+                memcpy(
+                    sortedData,
+                    temp,
+                    (size_t)newCount * sizeof(int)
+                );
+
+                free(temp);
+                mergeCount = newCount;
+            }
+        }
+    }
+
     printf("Rank %d sorted chunk:", rank);
 
     for (int i = 0; i < local_count; i++) {
@@ -104,6 +181,7 @@ int main(int argc, char **argv) {
     free(local_data);
     free(counts);
     free(displacements);
+    free(sortedData);
 
     MPI_Finalize(); 
     return 0;
