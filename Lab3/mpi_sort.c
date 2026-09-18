@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
             } else {
                 int newCount = mergeCount + chunkCount;
                 int *temp = malloc((size_t)newCount * sizeof(int));
-                merge_arrays(
+                mergeArrays(
                     sortedData,
                     mergeCount,
                     global_data + displacements[p],
@@ -168,6 +168,20 @@ int main(int argc, char **argv) {
             }
         }
     }
+
+    double end = MPI_Wtime();
+    double localElapsed = end - start;
+    double maxElapsed = 0.0;
+
+    MPI_Reduce(
+        &localElapsed,
+        &maxElapsed,
+        1,
+        MPI_DOUBLE,
+        MPI_MAX,
+        0,
+        MPI_COMM_WORLD
+    );
 
     printf("Rank %d sorted chunk:", rank);
 
