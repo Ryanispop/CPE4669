@@ -71,6 +71,8 @@ int main(int argc, char **argv) {
     int local_capacity = local_count > 0 ? local_count : 1;
     local_data = malloc((size_t)local_capacity * sizeof(int));
 
+    long long inputChecksum = 0;
+
     if (rank == 0) {
         counts = malloc(processes * sizeof(int));
         displacements = malloc(processes * sizeof(int));
@@ -83,6 +85,7 @@ int main(int argc, char **argv) {
 
         for (int i = 0; i < n; i++) {
             global_data[i] = rand() % 1000;
+            inputChecksum += global_data[i];
         }
 
         for (int i = 0; i < processes; i++) {
@@ -128,11 +131,11 @@ int main(int argc, char **argv) {
     );
 
     int *sortedData = NULL;
+    int mergeCount = 0;
 
     if (rank == 0) {
         int capacity = n > 0 ? n : 1;
         sortedData = malloc((size_t)capacity * sizeof(int));
-        int mergeCount = 0;
 
         for (int p = 0; p < processes; p++) {
 
@@ -182,6 +185,28 @@ int main(int argc, char **argv) {
         0,
         MPI_COMM_WORLD
     );
+
+    if (rank == 0) {
+        int sortedCorrect = 1;
+
+        for (int i = 1; i < n; i++) {
+            if (sortedData[i - 1] > sortedData[i]) {
+                sortedCorrect = 0;
+                break;
+            }
+        }
+
+        long long outputChecksum = 0;
+
+        for (int i = 0; i < n; i++) {
+            outputChecksum += sortedData[i];
+        }
+
+        int countCorrect = (mergeCount == n);
+        int checksumCorrect = (inputChecksum == outputChecksum);
+        int passed = sortedCorrect && countCorrect && checksumCorrect;
+        printf("N=%d ranks=%d time=%f status=%s\n", n, processes, maxElapsed, passed ? "Pass!" : "Fail!");
+    }
 
     printf("Rank %d sorted chunk:", rank);
 
