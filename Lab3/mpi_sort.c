@@ -172,8 +172,8 @@ int main(int argc, char **argv) {
         }
     }
 
-    double end = MPI_Wtime();
-    double localElapsed = end - start;
+    double endTime = MPI_Wtime();
+    double localElapsed = endTime - start;
     double maxElapsed = 0.0;
 
     MPI_Reduce(
