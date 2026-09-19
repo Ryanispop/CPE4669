@@ -1,15 +1,35 @@
 #!/bin/bash
-#SBATCH --job-name="mpi_sort"
-#SBATCH --output="mpi_sort.%j.%N.out"
-#SBATCH --nodes=1
-#SBATCH --ntasks-per-node=5
-#SBATCH --mem=8G
-#SBATCH --account="slo106"
-#SBATCH --time=00:10:00
+#SBATCH --job-name="mpi_sort_scaling"
+#SBATCH --output="mpi_sort_scalling.%j.%N.out"
 #SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=128
+#SBATCH --mem=0
+#SBATCH --account="slo106"
+#SBATCH --time=00:30:00
 
-# Run the correctness tests
-srun -n 1 ./mpi_sort 0
-srun -n 3 ./mpi_sort 17
-srun -n 5 ./mpi_sort 100003
+# Use a fixed, sufficiently large value of N for all runs.
+# Test rank counts: 1, 2, 4, 8, 16, 32, 64, 128.
+# Run each configuration at least 3 times to obtain median Tp.
+
+N=10000000
+RANKS=(1 2 4 8 16 32 64 128)
+TRIALS=3
+
+echo "Problem size N : $N"
+echo "Rank counts    : ${RANKS[*]}"
+echo "Trials per rank: $TRIALS"
+echo ""
+
+for p in "${RANKS[@]}"; do
+    echo "--- Benchmarking rank count p = $p ---"
+    for trial in $(seq 1 $TRIALS); do
+        echo "Trial $trial for p=$p:"
+        srun -n "$p" ./mpi_sort "$N"
+    done
+    echo ""
+done
+
+echo "=================================================="
+echo "All scaling runs completed."
 
