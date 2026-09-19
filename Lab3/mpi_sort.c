@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
         srand(4669);  // Fixed seed
 
         for (int i = 0; i < n; i++) {
-            global_data[i] = rand() % 1000;
+            global_data[i] = rand();
             inputChecksum += global_data[i];
         }
 
@@ -118,59 +118,83 @@ int main(int argc, char **argv) {
         compare_ints
     );
 
-    MPI_Gatherv(
-        local_data,
-        local_count,
-        MPI_INT,
-        global_data,
-        counts,
-        displacements,
-        MPI_INT,
-        0,
-        MPI_COMM_WORLD
-    );
+    for (int step = 1; step < processes; step *= 2) {
+        int group_size = 2 * step;
 
-    int *sortedData = NULL;
-    int mergeCount = 0;
+        if (rank % group_size == 0) {
+            /* This rank is a receiver. */
+            int partner = rank + step;
 
-    if (rank == 0) {
-        int capacity = n > 0 ? n : 1;
-        sortedData = malloc((size_t)capacity * sizeof(int));
+            if (partner < processes) {
+                int incoming_count;
 
-        for (int p = 0; p < processes; p++) {
-
-            int chunkCount = counts[p];
-            if (chunkCount == 0) continue;
-
-            if (mergeCount == 0) {
-                memcpy(
-                    sortedData,
-                    global_data + displacements[p],
-                    (size_t)chunkCount * sizeof(int)
+                MPI_Recv(
+                    &incoming_count,
+                    1,
+                    MPI_INT,
+                    partner,
+                    0,
+                    MPI_COMM_WORLD,
+                    MPI_STATUS_IGNORE
                 );
-                mergeCount = chunkCount;
-            } else {
-                int newCount = mergeCount + chunkCount;
-                int *temp = malloc((size_t)newCount * sizeof(int));
+
+                int incoming_capacity = incoming_count > 0 ? incoming_count : 1;
+                int *incoming_data = malloc((size_t)incoming_capacity * sizeof(int));
+
+                int merged_count = local_count + incoming_count;
+                int merged_capacity = merged_count > 0 ? merged_count : 1;
+                int *merged_data = malloc((size_t)merged_capacity * sizeof(int));
+
+                MPI_Recv(
+                    incoming_data,
+                    incoming_count,
+                    MPI_INT,
+                    partner,
+                    1,
+                    MPI_COMM_WORLD,
+                    MPI_STATUS_IGNORE
+                );
+
                 mergeArrays(
-                    sortedData,
-                    mergeCount,
-                    global_data + displacements[p],
-                    chunkCount,
-                    temp
+                    local_data,
+                    local_count,
+                    incoming_data,
+                    incoming_count,
+                    merged_data
                 );
 
-                memcpy(
-                    sortedData,
-                    temp,
-                    (size_t)newCount * sizeof(int)
-                );
+                free(local_data);
+                free(incoming_data);
 
-                free(temp);
-                mergeCount = newCount;
+                local_data = merged_data;
+                local_count = merged_count;
             }
+        } else if (rank % group_size == step) {
+            /* This rank is a sender. */
+            int partner = rank - step;
+
+            MPI_Send(
+                &local_count,
+                1,
+                MPI_INT,
+                partner,
+                0,
+                MPI_COMM_WORLD
+            );
+
+            MPI_Send(
+                local_data,
+                local_count,
+                MPI_INT,
+                partner,
+                1,
+                MPI_COMM_WORLD
+            );
+
+            break;
         }
     }
+
 
     double endTime = MPI_Wtime();
     double localElapsed = endTime - start;
@@ -187,10 +211,11 @@ int main(int argc, char **argv) {
     );
 
     if (rank == 0) {
+        int countCorrect = (local_count == n);
         int sortedCorrect = 1;
 
         for (int i = 1; i < n; i++) {
-            if (sortedData[i - 1] > sortedData[i]) {
+            if (local_data[i - 1] > local_data[i]) {
                 sortedCorrect = 0;
                 break;
             }
@@ -199,28 +224,25 @@ int main(int argc, char **argv) {
         long long outputChecksum = 0;
 
         for (int i = 0; i < n; i++) {
-            outputChecksum += sortedData[i];
+            outputChecksum += local_data[i];
         }
 
-        int countCorrect = (mergeCount == n);
         int checksumCorrect = (inputChecksum == outputChecksum);
         int passed = sortedCorrect && countCorrect && checksumCorrect;
-        printf("N=%d ranks=%d time=%f status=%s\n", n, processes, maxElapsed, passed ? "Pass!" : "Fail!");
+        printf(
+            "SUMMARY N=%d ranks=%d seconds=%.9f status=%s\n",
+            n,
+            processes,
+            maxElapsed,
+            passed ? "PASS" : "FAIL"
+        );
     }
 
-    printf("Rank %d sorted chunk:", rank);
-
-    for (int i = 0; i < local_count; i++) {
-        printf(" %d", local_data[i]);
-    }
-
-    printf("\n");
 
     free(global_data);
     free(local_data);
     free(counts);
     free(displacements);
-    free(sortedData);
 
     MPI_Finalize(); 
     return 0;
