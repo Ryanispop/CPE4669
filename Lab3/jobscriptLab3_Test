@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH --job-name="mpi_sort_test"
+#SBATCH --output="mpi_sort.%j.%N.out"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=5
+#SBATCH --mem=8G
+#SBATCH --account="slo106"
+#SBATCH --time=00:10:00
+#SBATCH --partition=shared
+
+# Run the correctness tests
+srun -n 1 ./mpi_sort 0
+srun -n 3 ./mpi_sort 17
+srun -n 5 ./mpi_sort 100003
+
