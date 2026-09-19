@@ -1,0 +1,70 @@
+Problem size N : 10000000
+Rank counts    : 1 2 4 8 16 32 64 128
+Trials per rank: 3
+
+--- Benchmarking rank count p = 1 ---
+Trial 1 for p=1:
+SUMMARY N=10000000 ranks=1 seconds=1.982725619 status=PASS
+Trial 2 for p=1:
+SUMMARY N=10000000 ranks=1 seconds=1.941166344 status=PASS
+Trial 3 for p=1:
+SUMMARY N=10000000 ranks=1 seconds=1.952094725 status=PASS
+
+--- Benchmarking rank count p = 2 ---
+Trial 1 for p=2:
+SUMMARY N=10000000 ranks=2 seconds=0.991549136 status=PASS
+Trial 2 for p=2:
+SUMMARY N=10000000 ranks=2 seconds=1.072129990 status=PASS
+Trial 3 for p=2:
+SUMMARY N=10000000 ranks=2 seconds=0.998622386 status=PASS
+
+--- Benchmarking rank count p = 4 ---
+Trial 1 for p=4:
+SUMMARY N=10000000 ranks=4 seconds=0.576369634 status=PASS
+Trial 2 for p=4:
+SUMMARY N=10000000 ranks=4 seconds=0.613675965 status=PASS
+Trial 3 for p=4:
+SUMMARY N=10000000 ranks=4 seconds=0.580407337 status=PASS
+
+--- Benchmarking rank count p = 8 ---
+Trial 1 for p=8:
+SUMMARY N=10000000 ranks=8 seconds=0.380948820 status=PASS
+Trial 2 for p=8:
+SUMMARY N=10000000 ranks=8 seconds=0.378083524 status=PASS
+Trial 3 for p=8:
+SUMMARY N=10000000 ranks=8 seconds=0.379671735 status=PASS
+
+--- Benchmarking rank count p = 16 ---
+Trial 1 for p=16:
+SUMMARY N=10000000 ranks=16 seconds=0.274634871 status=PASS
+Trial 2 for p=16:
+SUMMARY N=10000000 ranks=16 seconds=0.283832983 status=PASS
+Trial 3 for p=16:
+SUMMARY N=10000000 ranks=16 seconds=0.287622629 status=PASS
+
+--- Benchmarking rank count p = 32 ---
+Trial 1 for p=32:
+SUMMARY N=10000000 ranks=32 seconds=0.234579634 status=PASS
+Trial 2 for p=32:
+SUMMARY N=10000000 ranks=32 seconds=0.232850267 status=PASS
+Trial 3 for p=32:
+SUMMARY N=10000000 ranks=32 seconds=0.236920101 status=PASS
+
+--- Benchmarking rank count p = 64 ---
+Trial 1 for p=64:
+SUMMARY N=10000000 ranks=64 seconds=0.222427800 status=PASS
+Trial 2 for p=64:
+SUMMARY N=10000000 ranks=64 seconds=0.219826563 status=PASS
+Trial 3 for p=64:
+SUMMARY N=10000000 ranks=64 seconds=0.223146832 status=PASS
+
+--- Benchmarking rank count p = 128 ---
+Trial 1 for p=128:
+SUMMARY N=10000000 ranks=128 seconds=0.222379669 status=PASS
+Trial 2 for p=128:
+SUMMARY N=10000000 ranks=128 seconds=0.224230202 status=PASS
+Trial 3 for p=128:
+SUMMARY N=10000000 ranks=128 seconds=0.222711513 status=PASS
+
+==================================================
+All scaling runs completed.

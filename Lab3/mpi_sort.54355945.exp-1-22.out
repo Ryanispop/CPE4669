@@ -1,0 +1,3 @@
+SUMMARY N=0 ranks=1 seconds=0.000010810 status=PASS
+SUMMARY N=17 ranks=3 seconds=0.000039284 status=PASS
+SUMMARY N=100003 ranks=5 seconds=0.004435079 status=PASS
