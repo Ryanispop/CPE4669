@@ -21,6 +21,7 @@ typedef struct OctreeNode {
    double mass;
    double comX, comY, comZ;  // center of mass
    int isLeaf;
+   int bodyIndex;  // index of the body contained in this leaf node, if any
 
    struct OctreeNode *children[8];
 } OctreeNode;
@@ -41,11 +42,28 @@ OctreeNode *createOctreeNode(double x, double y, double z, double halfSize) {
    node->comX = 0.0;
    node->comY = 0.0;
    node->comZ = 0.0;
-   node->isLeaf = -1;
+   node->isLeaf = 1;
+   node->bodyIndex = -1;
    for (int i = 0; i < 8; i++)
       node->children[i] = NULL;
 
    return node;
+}
+
+int getOctant(OctreeNode *node, Body *body) {
+   int oct = 0;
+   if (body->x >= node->x) oct |= 1;
+   if (body->y >= node->y) oct |= 2;
+   if (body->z >= node->z) oct |= 4;
+   return oct;
+}
+
+OctreeNode *createChild(OctreeNode *parent, int octant) {
+   double offset = parent->halfSize / 2.0;
+   double x = parent->x + ((octant & 1) ? offset : -offset);
+   double y = parent->y + ((octant & 2) ? offset : -offset);
+   double z = parent->z + ((octant & 4) ? offset : -offset);
+   return createOctreeNode(x, y, z, offset);
 }
 
 /* Function prototypes */
