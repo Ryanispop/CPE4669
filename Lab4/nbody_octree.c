@@ -374,6 +374,55 @@ void update_bodies(Body *bodies, int n, double dt)
 }
 
 
+int verify_correctness(const Body *initial, int n)
+{
+   const int test_n = 4;
+   const double tolerance = 1e-6;
+   Body direct[test_n];
+   Body octree[test_n];
+
+   if (n < test_n) {
+      printf("Correctness check: SKIP (need at least %d bodies)\n", test_n);
+      return 1;
+   }
+
+   for (int i = 0; i < test_n; i++) {
+      direct[i] = initial[i];
+      octree[i] = initial[i];
+   }
+
+   compute_forces(direct, test_n);
+   update_bodies(direct, test_n, DT);
+
+   OctreeNode *root = buildOctree(octree, test_n);
+   computeMassDistribution(root, octree);
+   computeForcesOctree(octree, test_n, root);
+   update_bodies(octree, test_n, DT);
+   freeOctree(root);
+
+   double max_difference = 0.0;
+   for (int i = 0; i < test_n; i++) {
+      max_difference = fmax(max_difference,
+         fabs(direct[i].x - octree[i].x));
+      max_difference = fmax(max_difference,
+         fabs(direct[i].y - octree[i].y));
+      max_difference = fmax(max_difference,
+         fabs(direct[i].z - octree[i].z));
+      max_difference = fmax(max_difference,
+         fabs(direct[i].vx - octree[i].vx));
+      max_difference = fmax(max_difference,
+         fabs(direct[i].vy - octree[i].vy));
+      max_difference = fmax(max_difference,
+         fabs(direct[i].vz - octree[i].vz));
+   }
+
+   int passed = max_difference <= tolerance;
+   printf("Correctness check: %s (max difference %.6e)\n",
+      passed ? "PASS" : "FAIL", max_difference);
+   return passed;
+}
+
+
 /*
 * Print body information.
 *
@@ -434,6 +483,10 @@ int main(int argc, char *argv[])
    srand(0);
 
    initialize_bodies(bodies, num_bodies);
+   if (!verify_correctness(bodies, num_bodies)) {
+      free(bodies);
+      return EXIT_FAILURE;
+   }
    clock_t start = clock();
 
    for (int step = 0; step < num_steps; step++) {
