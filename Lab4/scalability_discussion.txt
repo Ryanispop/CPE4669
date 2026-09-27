@@ -1,0 +1,7 @@
+We ran the MPI octree program with 10,000 bodies and 100 steps on one Expanse node. Each rank count was tested three times, and all 24 runs reported status=PASS. The median time decreased from 13.895776 seconds with one rank to 0.531538 seconds with 128 ranks. Relative to the one-rank MPI run, this is a speedup of 26.142602 and an efficiency of 20.4239%.
+
+The largest gains occurred at the lower rank counts. At 2 ranks, the speedup was 1.962090 with 98.1045% efficiency. At 32 ranks, the speedup was 18.602579 with 58.1331% efficiency. Increasing the count from 64 to 128 ranks still reduced the median time from 0.570774 to 0.531538 seconds, but efficiency fell from 38.0399% to 20.4239%.
+
+The implementation keeps a copy of the bodies and octree on every rank, assigns different body ranges to ranks for force calculation, and exchanges the resulting accelerations with MPI_Allgatherv after each step. This design distributes the force work, but every rank still rebuilds the full tree and participates in the acceleration exchange. Those repeated costs help explain why the speedup is lower than the ideal process-count increase at higher rank counts.
+
+This experiment used one node, so it measures strong scaling across MPI ranks on that allocation. It does not measure multi-node scaling. The raw output also contains logger socket warnings from the cluster environment, but every program summary reported PASS.

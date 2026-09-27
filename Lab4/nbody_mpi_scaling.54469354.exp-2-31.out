@@ -1,0 +1,143 @@
+Bodies       : 10000
+Steps        : 100
+Rank counts  : 1 2 4 8 16 32 64 128
+Trials       : 3
+Node list    : exp-2-31
+
+--- Benchmarking rank count p = 1 ---
+Trial 1 for p=1:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=1 seconds=14.008627184 status=PASS
+Trial 2 for p=1:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=1 seconds=13.895776204 status=PASS
+Trial 3 for p=1:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=1 seconds=13.854278648 status=PASS
+
+--- Benchmarking rank count p = 2 ---
+Trial 1 for p=2:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=2 seconds=7.098424297 status=PASS
+Trial 2 for p=2:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=2 seconds=7.066751829 status=PASS
+Trial 3 for p=2:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=2 seconds=7.082128657 status=PASS
+
+--- Benchmarking rank count p = 4 ---
+Trial 1 for p=4:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=4 seconds=3.709399100 status=PASS
+Trial 2 for p=4:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=4 seconds=3.711811247 status=PASS
+Trial 3 for p=4:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=4 seconds=3.691793530 status=PASS
+
+--- Benchmarking rank count p = 8 ---
+Trial 1 for p=8:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=8 seconds=1.997301801 status=PASS
+Trial 2 for p=8:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=8 seconds=2.005412007 status=PASS
+Trial 3 for p=8:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=8 seconds=1.985649761 status=PASS
+
+--- Benchmarking rank count p = 16 ---
+Trial 1 for p=16:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=16 seconds=1.195849530 status=PASS
+Trial 2 for p=16:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=16 seconds=1.238715179 status=PASS
+Trial 3 for p=16:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=16 seconds=1.217543627 status=PASS
+
+--- Benchmarking rank count p = 32 ---
+Trial 1 for p=32:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=32 seconds=0.798071904 status=PASS
+Trial 2 for p=32:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=32 seconds=0.745827384 status=PASS
+Trial 3 for p=32:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=32 seconds=0.746981169 status=PASS
+
+--- Benchmarking rank count p = 64 ---
+Trial 1 for p=64:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=64 seconds=0.573331066 status=PASS
+Trial 2 for p=64:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=64 seconds=0.570773775 status=PASS
+Trial 3 for p=64:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=64 seconds=0.566725252 status=PASS
+
+--- Benchmarking rank count p = 128 ---
+Trial 1 for p=128:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=128 seconds=0.531537617 status=PASS
+Trial 2 for p=128:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=128 seconds=0.528734643 status=PASS
+Trial 3 for p=128:
+logger: socket /dev/log: Connection refused
+logger: socket /dev/log: Connection refused
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10000 steps=100 ranks=128 seconds=0.533978017 status=PASS
+
+All Lab 4 scaling runs completed.

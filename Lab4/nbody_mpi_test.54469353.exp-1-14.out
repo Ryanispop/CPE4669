@@ -1,0 +1,6 @@
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10 steps=2 ranks=1 seconds=0.000012253 status=PASS
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10 steps=2 ranks=3 seconds=0.000664012 status=PASS
+MPI correctness check: PASS (max difference 7.275958e-12)
+SUMMARY bodies=10 steps=2 ranks=5 seconds=0.000032200 status=PASS
