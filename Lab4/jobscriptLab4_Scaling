@@ -1,0 +1,35 @@
+#!/bin/bash
+#SBATCH --job-name="nbody_mpi_scaling"
+#SBATCH --output="nbody_mpi_scaling.%j.%N.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=128
+#SBATCH --mem=0
+#SBATCH --account="slo106"
+#SBATCH --time=00:30:00
+
+set -euo pipefail
+
+# Keep these values fixed for every process count and trial.
+BODIES=10000
+STEPS=100
+RANKS=(1 2 4 8 16 32 64 128)
+TRIALS=3
+
+echo "Bodies       : $BODIES"
+echo "Steps        : $STEPS"
+echo "Rank counts  : ${RANKS[*]}"
+echo "Trials       : $TRIALS"
+echo "Node list    : ${SLURM_JOB_NODELIST:-unknown}"
+echo ""
+
+for p in "${RANKS[@]}"; do
+    echo "--- Benchmarking rank count p = $p ---"
+    for trial in $(seq 1 "$TRIALS"); do
+        echo "Trial $trial for p=$p:"
+        srun -n "$p" ./nbody_octree_mpi "$BODIES" "$STEPS"
+    done
+    echo ""
+done
+
+echo "All Lab 4 scaling runs completed."

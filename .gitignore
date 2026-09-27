@@ -3,3 +3,6 @@ Lab3/mpi_sort
 
 # OS files
 .DS_Store
+
+# Editor settings
+.vscode/
