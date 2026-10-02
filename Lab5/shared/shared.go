@@ -75,6 +75,7 @@ func (m *MembershipStore) Add(payload Node, reply *Node) error {
 	defer m.mu.Unlock()
 	m.Members[payload.ID] = payload
 	*reply = payload
+	fmt.Printf("Added node %d\n", payload.ID)
 	return nil
 }
 

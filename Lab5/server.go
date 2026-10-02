@@ -2,7 +2,9 @@ package main
 
 import (
 	"Lab5/shared"
+	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/rpc"
 )
@@ -24,6 +26,14 @@ func main() {
 		io.WriteString(res, "RPC SERVER LIVE!")
 	})
 
-	// listen and serve default HTTP server
-	http.ListenAndServe("localhost:9005", nil)
+	// Listen before printing so the message means the server is ready.
+	listener, err := net.Listen("tcp", "localhost:9005")
+	if err != nil {
+		fmt.Println("Server failed to start:", err)
+		return
+	}
+	fmt.Println("Started server")
+	if err := http.Serve(listener, nil); err != nil {
+		fmt.Println("Server stopped:", err)
+	}
 }

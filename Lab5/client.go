@@ -16,7 +16,7 @@ const (
 	X_TIME          = 1
 	Y_TIME          = 2
 	Z_TIME_MAX      = 100
-	Z_TIME_MIN      = 10
+	Z_TIME_MIN      = 50
 	FAILURE_TIMEOUT = 6
 )
 
@@ -167,6 +167,7 @@ func runAfterZ(server *rpc.Client, id int) {
 }
 
 func printMembership(m shared.Membership) {
+	fmt.Println("<<<<<Membership Table>>>>>")
 	for _, val := range m.Members {
 		status := "is Alive"
 		if !val.Alive {
