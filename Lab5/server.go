@@ -1,19 +1,19 @@
 package main
 
 import (
+	"Lab5/shared"
 	"io"
-	"lab2/shared"
 	"net/http"
 	"net/rpc"
 )
 
 func main() {
 	// create a Membership list
-	nodes := shared.NewMembership()
+	nodes := shared.NewMembershipStore()
 	requests := shared.NewRequests()
 
 	// register nodes with `rpc.DefaultServer`
-	rpc.Register(nodes)
+	rpc.RegisterName("Membership", nodes)
 	rpc.Register(requests)
 
 	// register an HTTP handler for RPC communication

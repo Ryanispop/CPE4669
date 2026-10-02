@@ -1,48 +1,66 @@
 package main
 
 import (
+	"Lab5/shared"
 	"fmt"
-	"lab2/shared"
 	"math/rand"
 	"net/rpc"
 	"os"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
 
 const (
-	MAX_NODES  = 8
-	X_TIME     = 1
-	Y_TIME     = 2
-	Z_TIME_MAX = 100
-	Z_TIME_MIN = 10
+	MAX_NODES       = 8
+	X_TIME          = 1
+	Y_TIME          = 2
+	Z_TIME_MAX      = 100
+	Z_TIME_MIN      = 10
+	FAILURE_TIMEOUT = 6
 )
+
 var self_node shared.Node
+var clientMu sync.Mutex
 
 // Send the current membership table to a neighboring node with the provided ID
 func sendMessage(server rpc.Client, id int, membership shared.Membership) {
-	//TODO
+	request := shared.Request{ID: id, Table: membership}
+	var accepted bool
+	if err := server.Call("Requests.Add", request, &accepted); err != nil {
+		fmt.Println("send failed:", err)
+	}
 }
 
 // Read incoming messages from other nodes
 func readMessages(server rpc.Client, id int, membership shared.Membership) *shared.Membership {
-	//TODO
+	var incoming shared.Membership
+	if err := server.Call("Requests.Listen", id, &incoming); err != nil {
+		// Listen currently returns an error when the queue is empty.
+		return &membership
+	}
+
+	// Merge incoming.Members into membership.Members here.
+	return shared.CombineTables(&membership, &incoming)
 }
 
 func calcTime() float64 {
-	//TODO
+	return float64(time.Now().UnixNano()) / float64(time.Second)
 }
 
 var wg = &sync.WaitGroup{}
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	Z_TIME := rand.Intn(Z_TIME_MAX - Z_TIME_MIN) + Z_TIME_MIN
+	Z_TIME := rand.Intn(Z_TIME_MAX-Z_TIME_MIN) + Z_TIME_MIN
 
 	// Connect to RPC server
-	server, _ := rpc.DialHTTP("tcp", "localhost:9005")
+	server, err := rpc.DialHTTP("tcp", "localhost:9005")
+	if err != nil {
+		fmt.Println("Could not connect to server:", err)
+		return
+	}
+	defer server.Close()
 
 	args := os.Args[1:]
 
@@ -74,7 +92,7 @@ func main() {
 	fmt.Println("Neighbors:", neighbors)
 
 	membership := shared.NewMembership()
-	membership.Add(self_node, &self_node)
+	membership.Members[id] = self_node
 
 	sendMessage(*server, neighbors[0], *membership)
 
@@ -89,20 +107,66 @@ func main() {
 }
 
 func runAfterX(server *rpc.Client, node *shared.Node, membership **shared.Membership, id int) {
-	//TODO
+	clientMu.Lock()
+	if !node.Alive {
+		clientMu.Unlock()
+		return
+	}
+
+	node.Hbcounter++
+	node.Time = calcTime()
+	(*membership).Members[id] = *node
+	clientMu.Unlock()
+
+	time.AfterFunc(time.Second*X_TIME, func() {
+		runAfterX(server, node, membership, id)
+	})
 }
 
 func runAfterY(server *rpc.Client, neighbors [2]int, membership **shared.Membership, id int) {
-	//TODO
+	clientMu.Lock()
+	if !self_node.Alive {
+		clientMu.Unlock()
+		return
+	}
+
+	snapshot := shared.CombineTables(*membership, shared.NewMembership())
+	clientMu.Unlock()
+
+	for _, neighbor := range neighbors {
+		sendMessage(*server, neighbor, *snapshot)
+	}
+
+	received := readMessages(*server, id, *shared.NewMembership())
+	clientMu.Lock()
+	*membership = shared.CombineTables(*membership, received)
+
+	now := calcTime()
+	for nodeID, node := range (*membership).Members {
+		if nodeID != id && now-node.Time > FAILURE_TIMEOUT {
+			node.Alive = false
+			(*membership).Members[nodeID] = node
+		}
+	}
+
+	printMembership(**membership)
+
+	clientMu.Unlock()
+	time.AfterFunc(time.Second*Y_TIME, func() {
+		runAfterY(server, neighbors, membership, id)
+	})
+
 }
 
 func runAfterZ(server *rpc.Client, id int) {
-	//TODO
+	clientMu.Lock()
+	self_node.Alive = false
+	clientMu.Unlock()
+
+	fmt.Println("Node", id, "crashed")
 }
 
-
-
-func printMembership(m shared.Membership){
+func printMembership(m shared.Membership) {
 	for _, val := range m.Members {
 		status := "is Alive"
 		if !val.Alive {
