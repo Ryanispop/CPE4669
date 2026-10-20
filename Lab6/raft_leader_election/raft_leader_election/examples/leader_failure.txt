@@ -1,0 +1,217 @@
+Raft leader election | 8 nodes | majority 5 | scenario=failure | seed=7
+Election timeout: random 150-300ms | heartbeat: 50ms | one-way message delay: 5ms
+Timestamps use simulated time. Fast mode: no wall-clock waits.
+[00000ms] INIT       node=1 term=0 Follower; timeout=232ms
+[00000ms] INIT       node=2 term=0 Follower; timeout=188ms
+[00000ms] INIT       node=3 term=0 Follower; timeout=251ms
+[00000ms] INIT       node=4 term=0 Follower; timeout=162ms
+[00000ms] INIT       node=5 term=0 Follower; timeout=168ms
+[00000ms] INIT       node=6 term=0 Follower; timeout=287ms
+[00000ms] INIT       node=7 term=0 Follower; timeout=174ms
+[00000ms] INIT       node=8 term=0 Follower; timeout=243ms
+[00000ms] STATUS     node | alive | state     | term | voted_for | votes | leader | last heartbeat
+[00000ms] STATUS        1 | yes   | Follower  |    0 |         - |     0 |      - | never
+[00000ms] STATUS        2 | yes   | Follower  |    0 |         - |     0 |      - | never
+[00000ms] STATUS        3 | yes   | Follower  |    0 |         - |     0 |      - | never
+[00000ms] STATUS        4 | yes   | Follower  |    0 |         - |     0 |      - | never
+[00000ms] STATUS        5 | yes   | Follower  |    0 |         - |     0 |      - | never
+[00000ms] STATUS        6 | yes   | Follower  |    0 |         - |     0 |      - | never
+[00000ms] STATUS        7 | yes   | Follower  |    0 |         - |     0 |      - | never
+[00000ms] STATUS        8 | yes   | Follower  |    0 |         - |     0 |      - | never
+[00162ms] TIMEOUT    node=4 term=0 election timer expired without a valid leader heartbeat
+[00162ms] STATE      node=4 term=1 Follower -> Candidate; starting election
+[00162ms] ELECTION   node=4 term=1 self-vote; votes=1/8; need=5; retry timeout=299ms
+[00162ms] REQUEST    node=4 term=1 send RequestVote -> node=1
+[00162ms] REQUEST    node=4 term=1 send RequestVote -> node=2
+[00162ms] REQUEST    node=4 term=1 send RequestVote -> node=3
+[00162ms] REQUEST    node=4 term=1 send RequestVote -> node=5
+[00162ms] REQUEST    node=4 term=1 send RequestVote -> node=6
+[00162ms] REQUEST    node=4 term=1 send RequestVote -> node=7
+[00162ms] REQUEST    node=4 term=1 send RequestVote -> node=8
+[00167ms] TERM       node=1 term=1 0 -> 1; RequestVote from node=4
+[00167ms] VOTE       node=1 term=1 RequestVote from node=4 request_term=1; GRANT; vote granted; send VoteResponse -> node=4
+[00167ms] TERM       node=2 term=1 0 -> 1; RequestVote from node=4
+[00167ms] VOTE       node=2 term=1 RequestVote from node=4 request_term=1; GRANT; vote granted; send VoteResponse -> node=4
+[00167ms] TERM       node=3 term=1 0 -> 1; RequestVote from node=4
+[00167ms] VOTE       node=3 term=1 RequestVote from node=4 request_term=1; GRANT; vote granted; send VoteResponse -> node=4
+[00167ms] TERM       node=5 term=1 0 -> 1; RequestVote from node=4
+[00167ms] VOTE       node=5 term=1 RequestVote from node=4 request_term=1; GRANT; vote granted; send VoteResponse -> node=4
+[00167ms] TERM       node=6 term=1 0 -> 1; RequestVote from node=4
+[00167ms] VOTE       node=6 term=1 RequestVote from node=4 request_term=1; GRANT; vote granted; send VoteResponse -> node=4
+[00167ms] TERM       node=7 term=1 0 -> 1; RequestVote from node=4
+[00167ms] VOTE       node=7 term=1 RequestVote from node=4 request_term=1; GRANT; vote granted; send VoteResponse -> node=4
+[00167ms] TERM       node=8 term=1 0 -> 1; RequestVote from node=4
+[00167ms] VOTE       node=8 term=1 RequestVote from node=4 request_term=1; GRANT; vote granted; send VoteResponse -> node=4
+[00172ms] RESPONSE   node=4 term=1 GRANT from node=1; votes=2/8
+[00172ms] RESPONSE   node=4 term=1 GRANT from node=2; votes=3/8
+[00172ms] RESPONSE   node=4 term=1 GRANT from node=3; votes=4/8
+[00172ms] RESPONSE   node=4 term=1 GRANT from node=5; votes=5/8
+[00172ms] STATE      node=4 term=1 Candidate -> Leader; received 5/8 votes
+[00172ms] LEADER     node=4 term=1 elected with voters=[1, 2, 3, 4, 5]; majority=5
+[00172ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00172ms] RESPONSE   node=4 term=1 ignore vote from node=6; not in that election
+[00172ms] RESPONSE   node=4 term=1 ignore vote from node=7; not in that election
+[00172ms] RESPONSE   node=4 term=1 ignore vote from node=8; not in that election
+[00177ms] HEARTBEAT  node=1 term=1 received from leader=4; timer reset to 167ms
+[00177ms] HEARTBEAT  node=2 term=1 received from leader=4; timer reset to 211ms
+[00177ms] HEARTBEAT  node=3 term=1 received from leader=4; timer reset to 173ms
+[00177ms] HEARTBEAT  node=5 term=1 received from leader=4; timer reset to 291ms
+[00177ms] HEARTBEAT  node=6 term=1 received from leader=4; timer reset to 258ms
+[00177ms] HEARTBEAT  node=7 term=1 received from leader=4; timer reset to 165ms
+[00177ms] HEARTBEAT  node=8 term=1 received from leader=4; timer reset to 294ms
+[00222ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00272ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00322ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00372ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00422ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00472ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00500ms] STATUS     node | alive | state     | term | voted_for | votes | leader | last heartbeat
+[00500ms] STATUS        1 | yes   | Follower  |    1 |         4 |     0 |      4 | 477ms
+[00500ms] STATUS        2 | yes   | Follower  |    1 |         4 |     0 |      4 | 477ms
+[00500ms] STATUS        3 | yes   | Follower  |    1 |         4 |     0 |      4 | 477ms
+[00500ms] STATUS        4 | yes   | Leader    |    1 |         4 |     5 |      4 | never
+[00500ms] STATUS        5 | yes   | Follower  |    1 |         4 |     0 |      4 | 477ms
+[00500ms] STATUS        6 | yes   | Follower  |    1 |         4 |     0 |      4 | 477ms
+[00500ms] STATUS        7 | yes   | Follower  |    1 |         4 |     0 |      4 | 477ms
+[00500ms] STATUS        8 | yes   | Follower  |    1 |         4 |     0 |      4 | 477ms
+[00522ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00572ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00622ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00672ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00722ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00772ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00822ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00872ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00922ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[00972ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[01000ms] STATUS     node | alive | state     | term | voted_for | votes | leader | last heartbeat
+[01000ms] STATUS        1 | yes   | Follower  |    1 |         4 |     0 |      4 | 977ms
+[01000ms] STATUS        2 | yes   | Follower  |    1 |         4 |     0 |      4 | 977ms
+[01000ms] STATUS        3 | yes   | Follower  |    1 |         4 |     0 |      4 | 977ms
+[01000ms] STATUS        4 | yes   | Leader    |    1 |         4 |     5 |      4 | never
+[01000ms] STATUS        5 | yes   | Follower  |    1 |         4 |     0 |      4 | 977ms
+[01000ms] STATUS        6 | yes   | Follower  |    1 |         4 |     0 |      4 | 977ms
+[01000ms] STATUS        7 | yes   | Follower  |    1 |         4 |     0 |      4 | 977ms
+[01000ms] STATUS        8 | yes   | Follower  |    1 |         4 |     0 |      4 | 977ms
+[01022ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[01072ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[01122ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[01172ms] HEARTBEAT  node=4 term=1 broadcast -> all 7 peers
+[01172ms] CRASH      node=4 stopped; last role=Leader term=1; no more heartbeats or votes; quorum stays 5/8
+[01172ms] STATUS     node | alive | state     | term | voted_for | votes | leader | last heartbeat
+[01172ms] STATUS        1 | yes   | Follower  |    1 |         4 |     0 |      4 | 1127ms
+[01172ms] STATUS        2 | yes   | Follower  |    1 |         4 |     0 |      4 | 1127ms
+[01172ms] STATUS        3 | yes   | Follower  |    1 |         4 |     0 |      4 | 1127ms
+[01172ms] STATUS        4 | no    | Leader    |    1 |         4 |     5 |      4 | never
+[01172ms] STATUS        5 | yes   | Follower  |    1 |         4 |     0 |      4 | 1127ms
+[01172ms] STATUS        6 | yes   | Follower  |    1 |         4 |     0 |      4 | 1127ms
+[01172ms] STATUS        7 | yes   | Follower  |    1 |         4 |     0 |      4 | 1127ms
+[01172ms] STATUS        8 | yes   | Follower  |    1 |         4 |     0 |      4 | 1127ms
+[01353ms] TIMEOUT    node=8 term=1 election timer expired without a valid leader heartbeat
+[01353ms] STATE      node=8 term=2 Follower -> Candidate; starting election
+[01353ms] ELECTION   node=8 term=2 self-vote; votes=1/8; need=5; retry timeout=273ms
+[01353ms] REQUEST    node=8 term=2 send RequestVote -> node=1
+[01353ms] REQUEST    node=8 term=2 send RequestVote -> node=2
+[01353ms] REQUEST    node=8 term=2 send RequestVote -> node=3
+[01353ms] REQUEST    node=8 term=2 send RequestVote -> node=4
+[01353ms] REQUEST    node=8 term=2 send RequestVote -> node=5
+[01353ms] REQUEST    node=8 term=2 send RequestVote -> node=6
+[01353ms] REQUEST    node=8 term=2 send RequestVote -> node=7
+[01358ms] TERM       node=1 term=2 1 -> 2; RequestVote from node=8
+[01358ms] VOTE       node=1 term=2 RequestVote from node=8 request_term=2; GRANT; vote granted; send VoteResponse -> node=8
+[01358ms] TERM       node=2 term=2 1 -> 2; RequestVote from node=8
+[01358ms] VOTE       node=2 term=2 RequestVote from node=8 request_term=2; GRANT; vote granted; send VoteResponse -> node=8
+[01358ms] TERM       node=3 term=2 1 -> 2; RequestVote from node=8
+[01358ms] VOTE       node=3 term=2 RequestVote from node=8 request_term=2; GRANT; vote granted; send VoteResponse -> node=8
+[01358ms] TERM       node=5 term=2 1 -> 2; RequestVote from node=8
+[01358ms] VOTE       node=5 term=2 RequestVote from node=8 request_term=2; GRANT; vote granted; send VoteResponse -> node=8
+[01358ms] TERM       node=6 term=2 1 -> 2; RequestVote from node=8
+[01358ms] VOTE       node=6 term=2 RequestVote from node=8 request_term=2; GRANT; vote granted; send VoteResponse -> node=8
+[01358ms] TERM       node=7 term=2 1 -> 2; RequestVote from node=8
+[01358ms] VOTE       node=7 term=2 RequestVote from node=8 request_term=2; GRANT; vote granted; send VoteResponse -> node=8
+[01363ms] RESPONSE   node=8 term=2 GRANT from node=1; votes=2/8
+[01363ms] RESPONSE   node=8 term=2 GRANT from node=2; votes=3/8
+[01363ms] RESPONSE   node=8 term=2 GRANT from node=3; votes=4/8
+[01363ms] RESPONSE   node=8 term=2 GRANT from node=5; votes=5/8
+[01363ms] STATE      node=8 term=2 Candidate -> Leader; received 5/8 votes
+[01363ms] LEADER     node=8 term=2 elected with voters=[1, 2, 3, 5, 8]; majority=5
+[01363ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01363ms] RESPONSE   node=8 term=2 ignore vote from node=6; not in that election
+[01363ms] RESPONSE   node=8 term=2 ignore vote from node=7; not in that election
+[01368ms] HEARTBEAT  node=1 term=2 received from leader=8; timer reset to 191ms
+[01368ms] HEARTBEAT  node=2 term=2 received from leader=8; timer reset to 178ms
+[01368ms] HEARTBEAT  node=3 term=2 received from leader=8; timer reset to 237ms
+[01368ms] HEARTBEAT  node=5 term=2 received from leader=8; timer reset to 163ms
+[01368ms] HEARTBEAT  node=6 term=2 received from leader=8; timer reset to 176ms
+[01368ms] HEARTBEAT  node=7 term=2 received from leader=8; timer reset to 150ms
+[01413ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01463ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01500ms] STATUS     node | alive | state     | term | voted_for | votes | leader | last heartbeat
+[01500ms] STATUS        1 | yes   | Follower  |    2 |         8 |     0 |      8 | 1468ms
+[01500ms] STATUS        2 | yes   | Follower  |    2 |         8 |     0 |      8 | 1468ms
+[01500ms] STATUS        3 | yes   | Follower  |    2 |         8 |     0 |      8 | 1468ms
+[01500ms] STATUS        4 | no    | Leader    |    1 |         4 |     5 |      4 | never
+[01500ms] STATUS        5 | yes   | Follower  |    2 |         8 |     0 |      8 | 1468ms
+[01500ms] STATUS        6 | yes   | Follower  |    2 |         8 |     0 |      8 | 1468ms
+[01500ms] STATUS        7 | yes   | Follower  |    2 |         8 |     0 |      8 | 1468ms
+[01500ms] STATUS        8 | yes   | Leader    |    2 |         8 |     5 |      8 | 1177ms
+[01513ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01563ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01613ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01663ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01713ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01763ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01813ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01863ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01913ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[01963ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02000ms] STATUS     node | alive | state     | term | voted_for | votes | leader | last heartbeat
+[02000ms] STATUS        1 | yes   | Follower  |    2 |         8 |     0 |      8 | 1968ms
+[02000ms] STATUS        2 | yes   | Follower  |    2 |         8 |     0 |      8 | 1968ms
+[02000ms] STATUS        3 | yes   | Follower  |    2 |         8 |     0 |      8 | 1968ms
+[02000ms] STATUS        4 | no    | Leader    |    1 |         4 |     5 |      4 | never
+[02000ms] STATUS        5 | yes   | Follower  |    2 |         8 |     0 |      8 | 1968ms
+[02000ms] STATUS        6 | yes   | Follower  |    2 |         8 |     0 |      8 | 1968ms
+[02000ms] STATUS        7 | yes   | Follower  |    2 |         8 |     0 |      8 | 1968ms
+[02000ms] STATUS        8 | yes   | Leader    |    2 |         8 |     5 |      8 | 1177ms
+[02013ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02063ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02113ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02163ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02213ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02263ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02313ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02363ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02413ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02463ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02500ms] STATUS     node | alive | state     | term | voted_for | votes | leader | last heartbeat
+[02500ms] STATUS        1 | yes   | Follower  |    2 |         8 |     0 |      8 | 2468ms
+[02500ms] STATUS        2 | yes   | Follower  |    2 |         8 |     0 |      8 | 2468ms
+[02500ms] STATUS        3 | yes   | Follower  |    2 |         8 |     0 |      8 | 2468ms
+[02500ms] STATUS        4 | no    | Leader    |    1 |         4 |     5 |      4 | never
+[02500ms] STATUS        5 | yes   | Follower  |    2 |         8 |     0 |      8 | 2468ms
+[02500ms] STATUS        6 | yes   | Follower  |    2 |         8 |     0 |      8 | 2468ms
+[02500ms] STATUS        7 | yes   | Follower  |    2 |         8 |     0 |      8 | 2468ms
+[02500ms] STATUS        8 | yes   | Leader    |    2 |         8 |     5 |      8 | 1177ms
+[02513ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02563ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02613ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02663ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02713ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02763ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02813ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02863ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02913ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[02963ms] HEARTBEAT  node=8 term=2 broadcast -> all 7 peers
+[03000ms] STATUS     node | alive | state     | term | voted_for | votes | leader | last heartbeat
+[03000ms] STATUS        1 | yes   | Follower  |    2 |         8 |     0 |      8 | 2968ms
+[03000ms] STATUS        2 | yes   | Follower  |    2 |         8 |     0 |      8 | 2968ms
+[03000ms] STATUS        3 | yes   | Follower  |    2 |         8 |     0 |      8 | 2968ms
+[03000ms] STATUS        4 | no    | Leader    |    1 |         4 |     5 |      4 | never
+[03000ms] STATUS        5 | yes   | Follower  |    2 |         8 |     0 |      8 | 2968ms
+[03000ms] STATUS        6 | yes   | Follower  |    2 |         8 |     0 |      8 | 2968ms
+[03000ms] STATUS        7 | yes   | Follower  |    2 |         8 |     0 |      8 | 2968ms
+[03000ms] STATUS        8 | yes   | Leader    |    2 |         8 |     5 |      8 | 1177ms
+[03000ms] SUMMARY    leader=4 term=1 elected_at=172ms voters=[1, 2, 3, 4, 5]
+[03000ms] SUMMARY    leader=8 term=2 elected_at=1363ms voters=[1, 2, 3, 5, 8]
+[03000ms] PASS       initial leader elected, leader crashed, and a different leader elected in a higher term
