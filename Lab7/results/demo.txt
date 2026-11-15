@@ -1,0 +1,81 @@
+Started 5 server processes, each with 4 virtual nodes; replication factor 3
+Server1 membership: 5 peers with advancing heartbeats
+Server2 membership: 5 peers with advancing heartbeats
+Server3 membership: 5 peers with advancing heartbeats
+Server4 membership: 5 peers with advancing heartbeats
+Server5 membership: 5 peers with advancing heartbeats
+
+BEFORE FAILURE
+Key        Primary    Replica 1  Replica 2 
+Anna       Server4    Server2    Server1
+Maria      Server4    Server2    Server1
+Lauren     Server4    Server2    Server1
+John       Server1    Server5    Server3
+Thomas     Server2    Server1    Server5
+Tim        Server1    Server5    Server3
+Alex       Server4    Server2    Server1
+Read John answered by: Server1
+Read Anna answered by: Server4
+Read Tim answered by: Server1
+Read Alex answered by: Server4
+Read Lauren answered by: Server4
+Read Thomas answered by: Server2
+Read Maria answered by: Server4
+Normal operation: all values and three replicas verified
+
+Stopping Server2 (actual process termination)
+Failure detected: Server2
+
+DURING OUTAGE: serving replicas (ring ownership is unchanged)
+Key        Available owners
+Anna       Server4 Server1
+Maria      Server4 Server1
+Lauren     Server4 Server1
+John       Server1 Server5 Server3
+Thomas     Server1 Server5
+Tim        Server1 Server5 Server3
+Alex       Server4 Server1
+Read Anna answered by: Server4
+Read Maria answered by: Server4
+Read Lauren answered by: Server4
+Read John answered by: Server1
+Read Thomas answered by: Server1
+Read Tim answered by: Server1
+Read Alex answered by: Server4
+Read Thomas answered by: Server1
+Thomas updated to 75 while Server2 was down
+
+Restarting Server2 with empty memory; unavailable until synchronized
+Server2 before synchronization: Thomas="" exists=false version=0
+Read Tim answered by: Server1
+Read Alex answered by: Server4
+Read Lauren answered by: Server4
+Read Thomas answered by: Server2
+Read Maria answered by: Server4
+Read John answered by: Server1
+Read Anna answered by: Server4
+Server2 after synchronization: Thomas="75" exists=true version=8
+Temporary recovery: all values and replica versions verified
+
+Permanently removing Server2
+Replacement: Anna -> Server5
+Replacement: Lauren -> Server5
+Replacement: Maria -> Server5
+Replacement: Alex -> Server5
+Replacement: Thomas -> Server3
+Key        Primary    Replica 1  Replica 2 
+Anna       Server4    Server1    Server5
+Maria      Server4    Server1    Server5
+Lauren     Server4    Server1    Server5
+John       Server1    Server5    Server3
+Thomas     Server1    Server5    Server3
+Tim        Server1    Server5    Server3
+Alex       Server4    Server1    Server5
+Read Alex answered by: Server4
+Read Lauren answered by: Server4
+Read Thomas answered by: Server1
+Read Maria answered by: Server4
+Read John answered by: Server1
+Read Anna answered by: Server4
+Read Tim answered by: Server1
+Permanent recovery: all seven keys verified on three surviving owners

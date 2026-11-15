@@ -1,0 +1,5 @@
+Workload: 1000 PUTs and 1000 GETs; median of 3 runs; startup excluded
+Configuration,Replicas,Seconds,Speedup,LabTimeRatio,Correct
+1-node,1,0.647840,1.000,1.000,Yes
+2-node,2,1.255791,0.516,1.938,Yes
+4-node,3,1.886838,0.343,2.913,Yes
