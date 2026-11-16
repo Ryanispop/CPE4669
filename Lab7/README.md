@@ -57,6 +57,6 @@ Recovery scans records with client writes paused. Gossip uses a static peer list
 and wall-clock heartbeats on one host. Removed servers stay failed in worker
 membership tables but are removed from the coordinator's ring.
 
-The report and measured results are in `report.pdf` and `results/`. Screenshots
-show browser views of actual captured output. Fill in individual contributions
-in `report.html`, then open it in a browser and Print to PDF before submitting.
+The final report is `Lab7_Report - Google Docs.pdf`. Screenshots in `results/`
+show browser views of actual captured output. Running the commands above also
+saves fresh demo and benchmark output in that directory.
